@@ -35,6 +35,7 @@ mkdir bbscoin
 cd bbscoin
 
 wget https://github.com/bbscoin/bbscoin-releases/blob/master/6.0.0/bbscoin_bins_ubuntu_16.04_v6.0.0.tar.gz
+
 tar xvzpf bbscoin_bins_ubuntu_16.04_v6.0.0.tar.gz
 
 
