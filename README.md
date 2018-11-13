@@ -3,13 +3,21 @@
 ============================================== apm 설치 ==============================================
 
 sudo apt-get update
+
 sudo apt-get upgrade
+
 sudo apt-get install apache2
+
 sudo apt-get upgrade
+
 sudo apt-get install mysql-server
+
 mysql 비밀번호 입력
+
 sudo apt-get install mysql-client
+
 sudo apt-get install php4.6-mysql php5.6-curl php5.6-xml php5.6-zip php5.6-gd php5.6-mbstring php5.6-mcrypt
+
 php libapache2-mod-php php-xml php-gd php-mysql php-curl php-xml php-zip php-mbstring  php-mcrypt
 
 
@@ -19,8 +27,11 @@ php libapache2-mod-php php-xml php-gd php-mysql php-curl php-xml php-zip php-mbs
 
 
 ============================================== bbscoin 설치 ==============================================
+
 cd /usr/local/src
+
 mkdir bbscoin
+
 cd bbscoin
 
 wget https://github.com/bbscoin/bbscoin-releases/blob/master/6.0.0/bbscoin_bins_ubuntu_16.04_v6.0.0.tar.gz
@@ -41,7 +52,9 @@ tar xvzpf bbscoin_bins_ubuntu_16.04_v6.0.0.tar.gz
 
 
 ============================================== bbscoin 설치 ==============================================
+
 bbscoin_g5.zip
+
 압축을 푸신후 현재 사용하시느 그누보드5 에 업로드 합니다.
 
 http://사이트주소/bbscoin/install.php (디비 생성)
@@ -50,7 +63,9 @@ http://사이트주소/bbscoin/install.php (디비 생성)
 
 
 http://사이트주소/bbscoin				(회원 충/환전)
+
 http://사이트주소/bbscoin/deposit_list.php		(회원충전리스트)
+
 http://사이트주소/bbscoin/withdraw_list.php		(회원환전리스트)
 
 
