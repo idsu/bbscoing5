@@ -1,7 +1,10 @@
 <?php
 include_once('../common.php');
 
-//$co_id = preg_replace('/[^a-z0-9_]/i', '', $co_id);
+if (!$is_member){
+	echo "<script>alert('회원이시면 로그인해주세요');history.back();</script>";
+	exit;
+}
 
 
 $g5['title'] = "bbscoin 환전";
