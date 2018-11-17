@@ -16,7 +16,7 @@ mysql 비밀번호 입력
 
 sudo apt-get install mysql-client
 
-sudo php libapache2-mod-php php-xml php-gd php-mysql php-curl php-xml php-zip php-mbstring  php-mcrypt
+sudo apt-get install php libapache2-mod-php php-xml php-gd php-mysql php-curl php-xml php-zip php-mbstring  php-mcrypt
 
 
 
