@@ -12,6 +12,10 @@ $deposit["payment_id"] = trim(preg_replace("/[^ABCDEF0123456789]*/s", "", $_REQU
 $deposit["bbscoin_dcnt"] = trim(preg_replace("/[^0-9]*/s", "", $_REQUEST["dt"]["bbscoin_dcnt"]));
 $deposit["transaction_hash"] = trim(preg_replace("/[^0-9a-zA-Z]*/s", "", $_REQUEST["dt"]["transaction_hash"]));
 
+//$row = sql_fetch("select * from bbsmoney_user where mb_no = '".$member["mb_no"]."'");
+//$deposit["payment_id"] = $row["payment_id"];
+
+
 if($deposit["bbscoin_dcnt"]<=0){
 	$json["result"] = "error";
 	$json["msg"] = "개수지정이 잘못되었습니다.";
@@ -45,21 +49,33 @@ if(strtolower($rsp_data["result"]["transaction"]["transactionHash"])==strtolower
 		for($i=0;$i<$cnt;$i++){
 			if($rsp_data["result"]["transaction"]["transfers"][$i]["address"]==$wallet_address){
 				if(($rsp_data["result"]["transaction"]["transfers"][$i]["amount"]/100000000)==$deposit["bbscoin_dcnt"]){
-					$coin = sql_fetch("select wdate from bbsmoney_deposit where transaction_hash = '".$deposit["transaction_hash"]."' and payment_id = '".$deposit["payment_id"]."'");
-					if($coin){
+					if($rsp_data["result"]["transaction"]["transfers"][$i]["timestamp"]==0){
 						$json["result"] = "error";
-						$json["msg"] = $coin["wdate"]."에 이미 충전 하셨습니다.";
+						$json["msg"] = "해당 내역이 확인되지만 전송이 완료되지 않았습니다. 전송완료후 시도해주세요";
 						echo json_encode($json);
 						exit;
 					}else{
-						sql_query("update {$g5['member_table']} set mb_point = mb_point + ".$deposit["bbscoin_dcnt"]." where mb_no = '".$member["mb_no"]."'");
-						$sql = "insert into bbsmoney_deposit set mb_no = '".$member["mb_no"]."',payment_id = '".$deposit["payment_id"]."',transaction_hash = '".$deposit["transaction_hash"]."',amount = '".$deposit["bbscoin_dcnt"]."',ip = '".$_SERVER[REMOTE_ADDR]."',wdate = now()";
-						sql_query($sql);
+						$coin = sql_fetch("select wdate from bbsmoney_deposit where transaction_hash = '".$deposit["transaction_hash"]."' and payment_id = '".$deposit["payment_id"]."'");
+						if($coin){
+							$json["result"] = "error";
+							$json["msg"] = $coin["wdate"]."에 이미 충전 하셨습니다.";
+							echo json_encode($json);
+							exit;
+						}else{
+							sql_query("update {$g5['member_table']} set mb_point = mb_point + ".$deposit["bbscoin_dcnt"]." where mb_no = '".$member["mb_no"]."'");
 
-						$json["result"] = "ok";
-						$json["msg"] = "충전이 정상적으로 완료되었습니다.";
-						echo json_encode($json);
-						exit;
+							$po_content = "BBSCOIN 입금";
+							$sqls = "insert into g5_point set mb_id = '".$member["mb_id"]."',po_datetime = now(),po_content = '$po_content',po_point = '-".$deposit["bbscoin_dcnt"]."',po_expire_date = '9999-12-31',po_mb_point = '".($member["mb_point"]-$deposit["bbscoin_dcnt"])."',po_rel_id = '".$member["mb_id"]."' ,po_rel_action = '$po_content'";
+							sql_query($sqls);
+
+							$sql = "insert into bbsmoney_deposit set mb_no = '".$member["mb_no"]."',payment_id = '".$deposit["payment_id"]."',transaction_hash = '".$deposit["transaction_hash"]."',amount = '".$deposit["bbscoin_dcnt"]."',ip = '".$_SERVER[REMOTE_ADDR]."',wdate = now()";
+							sql_query($sql);
+
+							$json["result"] = "ok";
+							$json["msg"] = "충전이 정상적으로 완료되었습니다.";
+							echo json_encode($json);
+							exit;
+						}
 					}
 				}else{
 					$json["result"] = "error";
