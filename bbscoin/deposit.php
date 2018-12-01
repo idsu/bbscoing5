@@ -49,7 +49,7 @@ if(strtolower($rsp_data["result"]["transaction"]["transactionHash"])==strtolower
 		for($i=0;$i<$cnt;$i++){
 			if($rsp_data["result"]["transaction"]["transfers"][$i]["address"]==$wallet_address){
 				if(($rsp_data["result"]["transaction"]["transfers"][$i]["amount"]/100000000)==$deposit["bbscoin_dcnt"]){
-					if($rsp_data["result"]["transaction"]["transfers"][$i]["timestamp"]==0){
+					if($rsp_data["result"]["transaction"]["timestamp"]==0){
 						$json["result"] = "error";
 						$json["msg"] = "해당 내역이 확인되지만 전송이 완료되지 않았습니다. 전송완료후 시도해주세요";
 						echo json_encode($json);
