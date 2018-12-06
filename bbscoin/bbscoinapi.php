@@ -317,3 +317,56 @@ class BBSCoinApiWebWallet {
 
 }
 
+// 포인트 부여
+function idsu_insert_point($mb_id, $point, $content='', $rel_table='', $rel_id='', $rel_action='', $expire=0, $repeat=0)
+{
+    global $config;
+    global $g5;
+    global $is_admin;
+
+    // 포인트가 없다면 업데이트 할 필요 없음
+    if ($point == 0) { return 0; }
+
+    // 회원아이디가 없다면 업데이트 할 필요 없음
+    if ($mb_id == '') { return 0; }
+    $mb = sql_fetch(" select mb_id from {$g5['member_table']} where mb_id = '$mb_id' ");
+    if (!$mb['mb_id']) { return 0; }
+
+    // 회원포인트
+    $mb_point = get_point_sum($mb_id);
+
+    // 포인트 건별 생성
+    $po_expire_date = '9999-12-31';
+
+    $po_expired = 0;
+    $po_mb_point = $mb_point + $point;
+
+    $sql = " insert into {$g5['point_table']}
+                set mb_id = '$mb_id',
+                    po_datetime = '".G5_TIME_YMDHIS."',
+                    po_content = '".addslashes($content)."',
+                    po_point = '$point',
+                    po_use_point = '0',
+                    po_mb_point = '$po_mb_point',
+                    po_expired = '$po_expired',
+                    po_expire_date = '$po_expire_date',
+                    po_rel_table = '$rel_table',
+                    po_rel_id = '$rel_id',
+                    po_rel_action = '$rel_action' ";
+    sql_query($sql);
+
+    // 포인트를 사용한 경우 포인트 내역에 사용금액 기록
+    if($point < 0) {
+        insert_use_point($mb_id, $point);
+    }
+
+    // 포인트 UPDATE
+    $sql = " update {$g5['member_table']} set mb_point = '$po_mb_point' where mb_id = '$mb_id' ";
+    sql_query($sql);
+
+	// XP UPDATE
+	update_xp($mb_id, $point, $content, $rel_table, $rel_action);
+
+	return 1;
+}
+
