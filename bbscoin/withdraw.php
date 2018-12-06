@@ -18,6 +18,13 @@ if($deposit["bbscoin_wcnt"]<=0){
 	exit;
 }
 
+if($deposit["bbscoin_wcnt"]<10000){
+	$json["result"] = "error";
+	$json["msg"] = "출금가능한 최소 개수는 10,000입니다.";
+	echo json_encode($json);
+	exit;
+}
+
 
 if($member["mb_point"]<$deposit["bbscoin_wcnt"]){
 	$json["result"] = "error";
@@ -44,7 +51,13 @@ if($rsp_data["error"]){
 	exit;
 }else{
 
-	sql_query("update {$g5['member_table']} set mb_point = mb_point - ".$deposit["bbscoin_wcnt"]." where mb_no = '".$member["mb_no"]."'");
+	//sql_query("update {$g5['member_table']} set mb_point = mb_point - ".$deposit["bbscoin_wcnt"]." where mb_no = '".$member["mb_no"]."'");
+
+	$po_content = "BBSCOIN 출금";
+	idsu_insert_point($member["mb_id"],$deposit["bbscoin_wcnt"]*-1,$po_content,"@bbswithdraw",$_SERVER["REMOTE_ADDR"],"BBSCOIN 출금");
+	//$sqls = "insert into g5_point set mb_id = '".$member["mb_id"]."',po_datetime = now(),po_content = '$po_content',po_point = '-".$deposit["bbscoin_wcnt"]."',po_expire_date = '9999-12-31',po_mb_point = '".($member["mb_point"]-$deposit["bbscoin_wcnt"])."',po_rel_id = '".$member["mb_id"]."' ,po_rel_action = '$po_content'";
+	//sql_query($sqls);
+
 	$sql = "insert into bbsmoney_withdraw set mb_no = '".$member["mb_no"]."',wallet_address = '".$deposit["wallet_address"]."',transaction_hash = '".$rsp_data["result"]["transactionHash"]."',amount = '".$deposit["bbscoin_wcnt"]."',ip = '".$_SERVER[REMOTE_ADDR]."',wdate = now()";
 	sql_query($sql);
 
